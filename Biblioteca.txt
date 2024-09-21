@@ -1,0 +1,5 @@
+Libro,El Quijote,123456789,Cervantes,1605,Una novela sobre un hidalgo
+Libro,1984,987654321,George Orwell,1949,Un futuro distópico bajo un régimen totalitario
+Revista,National Geographic,234567890,National Geographic,10,Septiembre
+Revista,Scientific American,345678901,Scientific American,12,Noviembre
+
