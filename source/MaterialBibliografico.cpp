@@ -1,24 +1,29 @@
 #include "MaterialBibliografico.h"
-using namespace std;
 
-// Constructor de MaterialBibliografico
+// Definición del constructor
 MaterialBibliografico::MaterialBibliografico(const std::string& nombre, const std::string& isbn, const std::string& autor)
-    : nombre(nombre), isbn(isbn), autor(autor), estaPrestado(false) {}
+    : nombre(nombre), isbn(isbn), autor(autor), prestado(false) {}
 
-
-// Implementación de la función para obtener el nombre
-std::string MaterialBibliografico::getNombre() const {
-    return nombre;
+// Método que indica si el material está prestado
+bool MaterialBibliografico::estaPrestado() const {
+    return prestado;
 }
 
-// Implementación de la función para prestar el material
+// Método para prestar el material
 void MaterialBibliografico::prestar() {
     prestado = true;
 }
 
-// Implementación de la función para devolver el material
+// Método para devolver el material
 void MaterialBibliografico::devolver() {
     prestado = false;
 }
+
+// Getter para el nombre del material
+std::string MaterialBibliografico::getNombre() const {
+    return nombre;
+}
+
+
 
 

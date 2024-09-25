@@ -1,19 +1,18 @@
 #pragma once
 #include "MaterialBibliografico.h"
-#include <iostream>
+#include <string>
 
 class Revista : public MaterialBibliografico {
 private:
     int numeroEdicion;
-    string mesPublicacion;
-
+    std::string mesPublicacion;
 public:
-    Revista(string nombre, string isbn, string autor, int numeroEdicion, string mesPublicacion)
-        : MaterialBibliografico(nombre, isbn, autor), numeroEdicion(numeroEdicion), mesPublicacion(mesPublicacion) {}
+    Revista(const std::string& nombre, const std::string& isbn, const std::string& autor, 
+            int numeroEdicion, const std::string& mesPublicacion);
 
-    void mostrarInformacion() const override {
-        cout << "Revista: " << nombre << ", ISBN: " << isbn << ", Autor: " << autor
-             << ", Edición: " << numeroEdicion << ", Mes: " << mesPublicacion << endl;
-    }
+    // Sobreescribir la función mostrarInformacion
+    void mostrarInformacion() const override;
 };
+
+
 

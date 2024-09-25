@@ -1,41 +1,22 @@
 #include "Usuario.h"
-using namespace std;
 #include <iostream>
+#include <algorithm>  // Para std::find
 
-Usuario::Usuario(string nombre, int id) : nombre(nombre), id(id), numPrestados(0) {}
+bool Usuario::devolverMaterial(MaterialBibliografico* material) {
+    // Busca el material en el vector de materiales prestados
+    auto it = std::find(materialesPrestados.begin(), materialesPrestados.end(), material);
 
-string Usuario::getNombre() const {
-    return nombre;
-}
-
-int Usuario::cantidadPrestados() const {
-    return numPrestados;
-}
-
-bool Usuario::prestarMaterial(MaterialBibliografico* material) {
-    if (numPrestados < 5) {
-        materialesPrestados[numPrestados++] = material;
-        material->setPrestado(true);
+    // Si se encuentra, lo devuelve
+    if (it != materialesPrestados.end()) {
+        material->setPrestado(false);
+        materialesPrestados.erase(it);  // Elimina el material del vector
+        numPrestados--;
         return true;
     } else {
-        std::cerr << "Error: No puedes prestar más de 5 materiales.\n";
+        std::cerr << "Error: el usuario no ha prestado este material.\n";
         return false;
     }
 }
 
-bool Usuario::devolverMaterial(MaterialBibliografico* material) {
-    for (int i = 0; i < numPrestados; ++i) {
-        if (materialesPrestados[i] == material) {
-            // Desplazar elementos en el array
-            for (int j = i; j < numPrestados - 1; ++j) {
-                materialesPrestados[j] = materialesPrestados[j + 1];
-            }
-            numPrestados--;
-            material->setPrestado(false);
-            return true;
-        }
-    }
-    std::cerr << "Error: Material no encontrado en los préstamos del usuario.\n";
-    return false;
-}
+
 

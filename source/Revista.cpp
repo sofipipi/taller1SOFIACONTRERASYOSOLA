@@ -1,12 +1,20 @@
 #include "Revista.h"
-using namespace std;
 #include <iostream>
 
-Revista::Revista(string nombre, string isbn, string autor, int numeroEdicion, string mesPublicacion)
+// Constructor
+Revista::Revista(const std::string& nombre, const std::string& isbn, const std::string& autor, 
+                 int numeroEdicion, const std::string& mesPublicacion)
     : MaterialBibliografico(nombre, isbn, autor), numeroEdicion(numeroEdicion), mesPublicacion(mesPublicacion) {}
 
+// Sobreescritura de mostrarInformacion
 void Revista::mostrarInformacion() const {
-    cout << "Revista: " << nombre << ", ISBN: " << isbn << ", Autor: " << autor
-              << ", Edición: " << numeroEdicion << ", Mes: " << mesPublicacion << std::endl;
+    std::cout << "Revista: " << nombre << "\n"
+              << "Autor: " << autor << "\n"
+              << "ISBN: " << isbn << "\n"
+              << "Número de Edición: " << numeroEdicion << "\n"
+              << "Mes de Publicación: " << mesPublicacion << "\n"
+              << (estaPrestado() ? "Prestado\n" : "Disponible\n");
 }
+
+
 

@@ -1,22 +1,18 @@
-#ifndef LIBRO_H
-#define LIBRO_H
-
+#pragma once
 #include "MaterialBibliografico.h"
-#include <iostream>
 #include <string>
-
-using namespace std;
 
 class Libro : public MaterialBibliografico {
 private:
-    string fechaPublicacion;
-    string resumen;
-
+    std::string fechaPublicacion;
+    std::string resumen;
 public:
-    Libro(string nombre, string isbn, string autor, string fechaPublicacion, string resumen);
+    Libro(const std::string& nombre, const std::string& isbn, const std::string& autor,
+          const std::string& fechaPublicacion, const std::string& resumen);
+
+    // Sobreescribir la función mostrarInformacion
     void mostrarInformacion() const override;
 };
 
-#endif // LIBRO_H
 
 

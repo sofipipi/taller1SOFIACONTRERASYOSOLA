@@ -1,45 +1,27 @@
-#pragma once
-#include <string>
-#include "MaterialBibliografico.h"
-using namespace std;
-#include <iostream>
+#ifndef USUARIO_H
+#define USUARIO_H
 
+#include <string>
+#include <vector>
+#include "MaterialBibliografico.h"
 
 class Usuario {
 private:
-    string nombre;
+    std::string nombre;
     int id;
-    MaterialBibliografico* materialesPrestados[5];
     int numPrestados;
+    std::vector<MaterialBibliografico*> materialesPrestados;
 
 public:
-    Usuario(string nombre, int id) : nombre(nombre), id(id), numPrestados(0) {}
+    Usuario(std::string nombre, int id);
 
-    string getNombre() const { return nombre; }
+    std::string getNombre() const;
+    int cantidadPrestados() const;
 
-    int cantidadPrestados() const { return numPrestados; }
-
-    bool prestarMaterial(MaterialBibliografico* material) {
-        if (numPrestados < 5) {
-            materialesPrestados[numPrestados++] = material;
-            material->setPrestado(true);
-            return true;
-        }
-        return false;
-    }
-
-    bool devolverMaterial(MaterialBibliografico* material) {
-        for (int i = 0; i < numPrestados; ++i) {
-            if (materialesPrestados[i] == material) {
-                for (int j = i; j < numPrestados - 1; ++j) {
-                    materialesPrestados[j] = materialesPrestados[j + 1];
-                }
-                numPrestados--;
-                material->setPrestado(false);
-                return true;
-            }
-        }
-        return false;
-    }
+    bool prestarMaterial(MaterialBibliografico* material);
+    bool devolverMaterial(MaterialBibliografico* material);
 };
+
+#endif // USUARIO_H
+
 

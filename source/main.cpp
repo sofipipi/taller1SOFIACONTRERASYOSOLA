@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -29,6 +30,7 @@ bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material);
 
 int main() {
     MaterialBibliografico* biblioteca[MAX_MATERIALES];
+    
     int numMateriales = 0;
     vector<Usuario> usuarios;
 
@@ -177,6 +179,7 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
 
     if (usuario && material && verificarPrestamo(usuario, material)) {
+        material->prestar(); // Usar el método prestar() del material
         usuario->prestarMaterial(material);
         cout << "Material prestado con éxito.\n";
     } else {
@@ -196,6 +199,7 @@ void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliote
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
 
     if (usuario && material) {
+        material->devolver(); // Usar el método devolver() del material
         usuario->devolverMaterial(material);
         cout << "Material devuelto con éxito.\n";
     } else {
