@@ -3,10 +3,10 @@
 
 class MaterialBibliografico {
 protected:
-    std::string nombre;
-    std::string isbn;
-    std::string autor;
-    bool prestado; // Indica si el material está prestado o no
+    std::string nombre;  // Nombre del material
+    std::string isbn;    // ISBN del material
+    std::string autor;   // Autor del material
+    bool prestado;       // Indica si el material está prestado o no
 
 public:
     // Constructor que recibe nombre, ISBN y autor
@@ -24,5 +24,9 @@ public:
 
     // Getter para el nombre del material
     std::string getNombre() const;
+
+    // Método estático para buscar un material en la biblioteca
+    static MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int numMateriales, const std::string& titulo);
 };
+
 

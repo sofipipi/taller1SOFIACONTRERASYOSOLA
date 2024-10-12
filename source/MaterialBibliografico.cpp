@@ -24,6 +24,19 @@ std::string MaterialBibliografico::getNombre() const {
     return nombre;
 }
 
+// Implementación del método estático buscarMaterial
+MaterialBibliografico* MaterialBibliografico::buscarMaterial(MaterialBibliografico* biblioteca[], int numMateriales, const std::string& titulo) {
+    for (int i = 0; i < numMateriales; ++i) {
+        if (biblioteca[i]->getNombre() == titulo) {
+            return biblioteca[i];  // Retorna el material si se encuentra
+        }
+    }
+    return nullptr;  // Retorna nullptr si no se encuentra el material
+}
+
+
+
+
 
 
 

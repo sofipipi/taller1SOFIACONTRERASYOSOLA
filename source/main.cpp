@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -21,14 +20,16 @@ void cargarPrestamos(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
 void mostrarMateriales(MaterialBibliografico* biblioteca[], int numMateriales);
 MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int numMateriales, const string& titulo);
 Usuario* buscarUsuario(vector<Usuario>& usuarios, const string& nombre);
-void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
+// Función para prestar material
+void prestarMaterial(std::vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
 void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
 
 // Manejo de errores
+void actualizarPrestamos(const Usuario& usuario, const MaterialBibliografico* material);
 bool verificarCapacidad(int numMateriales, int maxMateriales);
 bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material);
 
-int main() {
+int main(){
     MaterialBibliografico* biblioteca[MAX_MATERIALES];
     
     int numMateriales = 0;
@@ -82,29 +83,80 @@ void cargarBiblioteca(MaterialBibliografico* biblioteca[], int& numMateriales) {
     }
 
     string tipo, nombre, isbn, autor, extra1, extra2;
-    while (archivo >> tipo) {
-        archivo.ignore(); // Ignorar la coma
-        getline(archivo, nombre, ',');
-        getline(archivo, isbn, ',');
-        getline(archivo, autor, ',');
 
-        if (tipo == "Libro") {
-            getline(archivo, extra1, ',');  // Fecha de Publicación
-            getline(archivo, extra2);       // Resumen
-            biblioteca[numMateriales++] = new Libro(nombre, isbn, autor, extra1, extra2);
-        } else if (tipo == "Revista") {
-            int numeroEdicion;
-            archivo >> numeroEdicion;
-            archivo.ignore(); // Ignorar la coma
-            getline(archivo, extra1);  // Mes de Publicación
-            biblioteca[numMateriales++] = new Revista(nombre, isbn, autor, numeroEdicion, extra1);
+    while (true) {
+        // Leer tipo
+        if (!getline(archivo, tipo, ',')) {
+            if (archivo.eof()) break; // Si es el final del archivo, salir del bucle
+            cerr << "Error al leer el tipo de material.\n";
+            break;
         }
 
+        // Leer nombre
+        if (!getline(archivo, nombre, ',')) {
+            cerr << "Error al leer el nombre del material.\n";
+            break;
+        }
+
+        // Leer ISBN
+        if (!getline(archivo, isbn, ',')) {
+            cerr << "Error al leer el ISBN.\n";
+            break;
+        }
+
+        // Leer autor
+        if (!getline(archivo, autor, ',')) {
+            cerr << "Error al leer el autor.\n";
+            break;
+        }
+
+        if (tipo == "Libro") {
+            // Leer fecha de publicación
+            if (!getline(archivo, extra1, ',')) {
+                cerr << "Error al leer la fecha de publicación del libro.\n";
+                break;
+            }
+
+            // Leer resumen
+            if (!getline(archivo, extra2)) {
+                cerr << "Error al leer el resumen del libro.\n";
+                break;
+            }
+
+            // Agregar el libro a la biblioteca
+            biblioteca[numMateriales++] = new Libro(nombre, isbn, autor, extra1, extra2);
+
+        } else if (tipo == "Revista") {
+            int numeroEdicion;
+
+            // Leer número de edición
+            if (!(archivo >> numeroEdicion)) {
+                cerr << "Error al leer el número de edición de la revista.\n";
+                break;
+            }
+
+            archivo.ignore(); // Ignorar la coma después del número de edición
+
+            // Leer mes de publicación
+            if (!getline(archivo, extra1)) {
+                cerr << "Error al leer el mes de publicación de la revista.\n";
+                break;
+            }
+
+            // Agregar la revista a la biblioteca
+            biblioteca[numMateriales++] = new Revista(nombre, isbn, autor, numeroEdicion, extra1);
+        } else {
+            cerr << "Tipo de material no reconocido: " << tipo << "\n";
+            break;
+        }
+
+        // Verificar capacidad máxima
         if (!verificarCapacidad(numMateriales, MAX_MATERIALES)) {
             cerr << "Capacidad máxima de la biblioteca alcanzada.\n";
             break;
         }
     }
+
     archivo.close();
 }
 
@@ -144,8 +196,12 @@ void cargarPrestamos(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
 
 void mostrarMateriales(MaterialBibliografico* biblioteca[], int numMateriales) {
     for (int i = 0; i < numMateriales; ++i) {
-        biblioteca[i]->mostrarInformacion();
-        cout << endl;
+        if (biblioteca[i] != nullptr) {  // Verifica que el puntero no sea nulo
+            string nom = biblioteca[i]->getNombre();
+            cout << "Material " << i + 1 << ": " << nom << endl;
+        } else {
+            cout << "Error: Material " << i + 1 << " es nulo." << endl;
+        }
     }
 }
 
@@ -155,16 +211,59 @@ MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int n
             return biblioteca[i];
         }
     }
-    return nullptr;
+    return nullptr; // Devuelve nullptr si no se encuentra el material
 }
+
 
 Usuario* buscarUsuario(vector<Usuario>& usuarios, const string& nombre) {
     for (auto& usuario : usuarios) {
         if (usuario.getNombre() == nombre) {
-            return &usuario;
+            return &usuario; // Devuelve el puntero al usuario si se encuentra
         }
     }
-    return nullptr;
+    return nullptr; // Devuelve nullptr si no se encuentra el usuario
+}
+
+
+// Ejemplo de definición de devolverMaterial
+void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
+    string nombreUsuario, tituloMaterial;
+    cout << "Ingrese el nombre del usuario: ";
+    cin >> nombreUsuario;
+    cout << "Ingrese el título del material: ";
+    cin.ignore();
+    getline(cin, tituloMaterial);
+
+    Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
+    MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
+
+    if (usuario && material) {
+        if (usuario->devolverMaterial(material)) {
+            cout << "Material devuelto con éxito.\n";
+        } else {
+            cerr << "Error: No se puede devolver el material.\n";
+        }
+    } else {
+        cerr << "Error: Usuario o material no encontrado.\n";
+    }
+}
+
+// Ejemplo de definición de verificarCapacidad
+bool verificarCapacidad(int numMateriales, int maxMateriales) {
+    return numMateriales < maxMateriales;
+}
+
+// Ejemplo de definición de verificarPrestamo
+bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material) {
+    if (usuario->cantidadPrestados() >= 5) {
+        cerr << "Error: El usuario ya tiene 5 materiales prestados.\n";
+        return false;
+    }
+    if (material->estaPrestado()) {
+        cerr << "Error: El material ya está prestado.\n";
+        return false;
+    }
+    return true;
 }
 
 void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
@@ -178,49 +277,44 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
     Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
 
-    if (usuario && material && verificarPrestamo(usuario, material)) {
-        material->prestar(); // Usar el método prestar() del material
-        usuario->prestarMaterial(material);
-        cout << "Material prestado con éxito.\n";
-    } else {
-        cerr << "Error: No se puede prestar el material.\n";
+    // Depuración
+    if (!usuario) {
+        cout << "Usuario no encontrado: " << nombreUsuario << endl;
     }
-}
-
-void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
-    string nombreUsuario, tituloMaterial;
-    cout << "Ingrese el nombre del usuario: ";
-    cin >> nombreUsuario;
-    cout << "Ingrese el título del material: ";
-    cin.ignore();
-    getline(cin, tituloMaterial);
-
-    Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
-    MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
+    if (!material) {
+        cout << "Material no encontrado: " << tituloMaterial << endl;
+    }
 
     if (usuario && material) {
-        material->devolver(); // Usar el método devolver() del material
-        usuario->devolverMaterial(material);
-        cout << "Material devuelto con éxito.\n";
+        if (!material->estaPrestado()) {
+            // No está prestado, verificar capacidad
+            if (verificarPrestamo(usuario, material)) {
+                material->prestar(); // Cambiar el estado del material a prestado
+                usuario->prestarMaterial(material);
+                cout << "Material prestado con éxito.\n";
+                actualizarPrestamos(*usuario, material);
+            } else {
+                cout << "Error: El usuario no puede prestar más materiales.\n";
+            }
+        } else {
+            cerr << "Error: El material ya está prestado.\n";
+        }
     } else {
-        cerr << "Error: No se puede devolver el material.\n";
+        cerr << "Error: Usuario o material no encontrado.\n";
     }
 }
 
-// Manejo de errores y validaciones
-bool verificarCapacidad(int numMateriales, int maxMateriales) {
-    return numMateriales < maxMateriales;
+void actualizarPrestamos(const Usuario& usuario, const MaterialBibliografico* material) {
+    ofstream archivo("Prestamos.txt", ios::app); // Abre en modo agregar
+    if (!archivo) {
+        cerr << "Error al abrir el archivo de préstamos.\n";
+        return;
+    }
+    archivo << usuario.getNombre() << "," << material->getNombre() << endl;
+    archivo.close();
 }
 
-bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material) {
-    if (usuario->cantidadPrestados() >= 5) {
-        cerr << "Error: El usuario ya tiene 5 materiales prestados.\n";
-        return false;
-    }
-    if (material->estaPrestado()) {
-        cerr << "Error: El material ya está prestado.\n";
-        return false;
-    }
-    return true;
-}
+
+
+
 
