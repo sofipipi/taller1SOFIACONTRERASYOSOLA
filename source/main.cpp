@@ -241,7 +241,7 @@ void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliote
     cin.ignore();
     getline(cin, nombreUsuario);
     cout << "Ingrese el título del material: ";
-    cin.ignore();
+   
     getline(cin, tituloMaterial);
 
     Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
@@ -288,13 +288,13 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
     string nombreUsuario, tituloMaterial;
     cout << "Ingrese el nombre del usuario: ";
     cin.ignore();
+    
     getline(cin, nombreUsuario);
     Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
     if (!usuario) {
         cout << "Usuario no encontrado: " << nombreUsuario << endl;
     }
     cout << "Ingrese el título del material: ";
-    cin.ignore();
     getline(cin, tituloMaterial);
 
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
@@ -310,7 +310,7 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
         if (!material->estaPrestado()) {
             // No está prestado, verificar capacidad
             if (verificarPrestamo(usuario, material)) {
-                material->prestar(); // Cambiar el estado del material a prestado
+               // Cambiar el estado del material a prestado
                 usuario->prestarMaterial(material);
                 cout << "Material prestado con éxito.\n";
                 actualizarPrestamos(*usuario, material);
