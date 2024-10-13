@@ -5,6 +5,8 @@
 #include "Libro.h"
 #include "Revista.h"
 #include "Usuario.h"
+#include <algorithm>
+#include <sstream>
 
 using namespace std;
 
@@ -25,6 +27,7 @@ void prestarMaterial(std::vector<Usuario>& usuarios, MaterialBibliografico* bibl
 void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
 
 // Manejo de errores
+void eliminarPrestamo(const Usuario& usuario, const MaterialBibliografico* material);
 void actualizarPrestamos(const Usuario& usuario, const MaterialBibliografico* material);
 bool verificarCapacidad(int numMateriales, int maxMateriales);
 bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material);
@@ -189,6 +192,8 @@ void cargarPrestamos(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
         MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
         if (usuario && material && !material->estaPrestado()) {
             usuario->prestarMaterial(material);
+         
+           
         }
     }
     archivo.close();
@@ -216,30 +221,43 @@ MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int n
 
 
 Usuario* buscarUsuario(vector<Usuario>& usuarios, const string& nombre) {
-    for (auto& usuario : usuarios) {
-        if (usuario.getNombre() == nombre) {
-            return &usuario; // Devuelve el puntero al usuario si se encuentra
-        }
+    auto it = std::find_if(usuarios.begin(), usuarios.end(),
+                           [&nombre](const Usuario& usuario) {
+                               return usuario.getNombre() == nombre;
+                           });
+
+    if (it != usuarios.end()) {
+        return &(*it);
     }
-    return nullptr; // Devuelve nullptr si no se encuentra el usuario
+    return nullptr;
 }
+
 
 
 // Ejemplo de definición de devolverMaterial
 void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
     string nombreUsuario, tituloMaterial;
     cout << "Ingrese el nombre del usuario: ";
-    cin >> nombreUsuario;
+    cin.ignore();
+    getline(cin, nombreUsuario);
     cout << "Ingrese el título del material: ";
     cin.ignore();
     getline(cin, tituloMaterial);
 
     Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
-
+    if (!material) {
+        cout << "Material no encontrado: " << tituloMaterial << endl;
+    }
+    if (material) {
+        cout << "Material encontrado: " << tituloMaterial << endl;
+    }
     if (usuario && material) {
         if (usuario->devolverMaterial(material)) {
+            
+            eliminarPrestamo(*usuario, material);
             cout << "Material devuelto con éxito.\n";
+
         } else {
             cerr << "Error: No se puede devolver el material.\n";
         }
@@ -269,23 +287,26 @@ bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material) {
 void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
     string nombreUsuario, tituloMaterial;
     cout << "Ingrese el nombre del usuario: ";
-    cin >> nombreUsuario;
+    cin.ignore();
+    getline(cin, nombreUsuario);
+    Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
+    if (!usuario) {
+        cout << "Usuario no encontrado: " << nombreUsuario << endl;
+    }
     cout << "Ingrese el título del material: ";
     cin.ignore();
     getline(cin, tituloMaterial);
 
-    Usuario* usuario = buscarUsuario(usuarios, nombreUsuario);
     MaterialBibliografico* material = buscarMaterial(biblioteca, numMateriales, tituloMaterial);
 
     // Depuración
-    if (!usuario) {
-        cout << "Usuario no encontrado: " << nombreUsuario << endl;
-    }
     if (!material) {
         cout << "Material no encontrado: " << tituloMaterial << endl;
     }
-
-    if (usuario && material) {
+    if (material) {
+        cout << "Material encontrado: " << tituloMaterial << endl;
+    }
+    if ( material && usuario) {
         if (!material->estaPrestado()) {
             // No está prestado, verificar capacidad
             if (verificarPrestamo(usuario, material)) {
@@ -296,11 +317,13 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
             } else {
                 cout << "Error: El usuario no puede prestar más materiales.\n";
             }
-        } else {
-            cerr << "Error: El material ya está prestado.\n";
+        } else if(material->estaPrestado()) {
+            cout << "Error: El material ya está prestado.\n";
         }
-    } else {
-        cerr << "Error: Usuario o material no encontrado.\n";
+    } 
+    else {
+
+        cout << "Error: Usuario o material no encontrado.\n";
     }
 }
 
@@ -315,6 +338,35 @@ void actualizarPrestamos(const Usuario& usuario, const MaterialBibliografico* ma
 }
 
 
+void eliminarPrestamo(const Usuario& usuario, const MaterialBibliografico* material) {
+    ifstream archivoEntrada("Prestamos.txt");
+    if (!archivoEntrada) {
+        cerr << "Error al abrir el archivo de préstamos para lectura.\n";
+        return;
+    }
 
+    ofstream archivoSalida("Prestamos_temp.txt");  // Archivo temporal
+    if (!archivoSalida) {
+        cerr << "Error al crear el archivo temporal.\n";
+        return;
+    }
 
+    string linea;
+    string nombreUsuario = usuario.getNombre();
+    string nombreMaterial = material->getNombre();
 
+    // Leer cada línea y escribirla en el archivo temporal si no coincide con la que queremos eliminar
+    while (getline(archivoEntrada, linea)) {
+        // Si la línea no contiene tanto el nombre del usuario como el material, la copiamos
+        if (linea.find(nombreUsuario) == string::npos || linea.find(nombreMaterial) == string::npos) {
+            archivoSalida << linea << endl;
+        }
+    }
+
+    archivoEntrada.close();
+    archivoSalida.close();
+
+    // Elimina el archivo original y renombra el archivo temporal
+    remove("Prestamos.txt");
+    rename("Prestamos_temp.txt", "Prestamos.txt");
+}

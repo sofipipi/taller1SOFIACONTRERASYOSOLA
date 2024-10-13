@@ -6,7 +6,7 @@ protected:
     std::string nombre;  // Nombre del material
     std::string isbn;    // ISBN del material
     std::string autor;   // Autor del material
-    bool prestado;       // Indica si el material está prestado o no
+    bool prestado=false;       // Indica si el material está prestado o no
 
 public:
     // Constructor que recibe nombre, ISBN y autor
