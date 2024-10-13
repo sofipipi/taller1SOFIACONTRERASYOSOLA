@@ -1,10 +1,14 @@
 # taller1SOFIACONTRERAS
+integrante:
 
-Ejecucion del codigo:
+Sofia Catalina Contreras Godoy
+Rut: 21.702.328-9 
+Correo institucional: sofia.contreras02@alumnos.ucn.cl
+
+Compilacion:
 $g++ -I./include source/Libro.cpp source/MaterialBibliografico.cpp source/Revista.cpp source/Usuario.cpp source/main.cpp -o simuladorBiblioteca
 
-
-una ves compilado: ./simuladorBiblioteca
+Ejecucion: ./simuladorBiblioteca
 
 Descripcion de las clases en el main:
 MaterialBibliografico a traves de leer Biblioteca.txt, crea los siguientes objetos:
@@ -20,13 +24,3 @@ Usuario1: {nombre: Juan Perez ; ID:1 }
 Usuario2: {nombre: Maria Gomez ; ID:2 }
 Usuario3: {nombre: Carlos Sanchez; ID:3 }
 
-
-
-
-
-
-integrante:
-
-Sofia Catalina Contreras Godoy
-Rut: 21.702.328-9 
-Correo institucional: sofia.contreras02@alumnos.ucn.cl
