@@ -203,11 +203,29 @@ void mostrarMateriales(MaterialBibliografico* biblioteca[], int numMateriales) {
     for (int i = 0; i < numMateriales; ++i) {
         if (biblioteca[i] != nullptr) {  // Verifica que el puntero no sea nulo
             string nom = biblioteca[i]->getNombre();
-            cout << "Material " << i + 1 << ": " << nom << endl;
+            cout << i + 1 << ": " << nom << endl;
         } else {
             cout << "Error: Material " << i + 1 << " es nulo." << endl;
         }
     }
+    int opcion=0;
+    cout<< "Mostrar mas informacion de algun material/ 1 para Si /2 para No"<<endl;
+    cin>>opcion;
+    if (opcion==1){
+        string nombreMaterial;
+        cout<< "¿Cual material desea ver?"<<endl;
+        cin.ignore();
+        getline(cin, nombreMaterial);
+        MaterialBibliografico* material=buscarMaterial(biblioteca,numMateriales, nombreMaterial);
+        
+        material->mostrarInformacion();
+        cout<<endl;
+
+    }
+    else if(opcion==2){
+        cout<<"volviendo al menu..."<<endl;
+    }
+
 }
 
 MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int numMateriales, const string& titulo) {
