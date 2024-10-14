@@ -25,10 +25,10 @@ Usuario* buscarUsuario(vector<Usuario>& usuarios, const string& nombre);
 // Función para prestar material
 void prestarMaterial(std::vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
 void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales);
-
-// Manejo de errores
 void eliminarPrestamo(const Usuario& usuario, const MaterialBibliografico* material);
 void actualizarPrestamos(const Usuario& usuario, const MaterialBibliografico* material);
+
+// Manejo de errores
 bool verificarCapacidad(int numMateriales, int maxMateriales);
 bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material);
 
@@ -70,7 +70,7 @@ int main(){
         }
     } while (opcion != 4);
 
-    // Liberar memoria
+    
     for (int i = 0; i < numMateriales; ++i) {
         delete biblioteca[i];
     }
@@ -88,39 +88,39 @@ void cargarBiblioteca(MaterialBibliografico* biblioteca[], int& numMateriales) {
     string tipo, nombre, isbn, autor, extra1, extra2;
 
     while (true) {
-        // Leer tipo
+        
         if (!getline(archivo, tipo, ',')) {
             if (archivo.eof()) break; // Si es el final del archivo, salir del bucle
             cerr << "Error al leer el tipo de material.\n";
             break;
         }
 
-        // Leer nombre
+        
         if (!getline(archivo, nombre, ',')) {
             cerr << "Error al leer el nombre del material.\n";
             break;
         }
 
-        // Leer ISBN
+        
         if (!getline(archivo, isbn, ',')) {
             cerr << "Error al leer el ISBN.\n";
             break;
         }
 
-        // Leer autor
+       
         if (!getline(archivo, autor, ',')) {
             cerr << "Error al leer el autor.\n";
             break;
         }
 
         if (tipo == "Libro") {
-            // Leer fecha de publicación
+            
             if (!getline(archivo, extra1, ',')) {
                 cerr << "Error al leer la fecha de publicación del libro.\n";
                 break;
             }
 
-            // Leer resumen
+          
             if (!getline(archivo, extra2)) {
                 cerr << "Error al leer el resumen del libro.\n";
                 break;
@@ -132,15 +132,15 @@ void cargarBiblioteca(MaterialBibliografico* biblioteca[], int& numMateriales) {
         } else if (tipo == "Revista") {
             int numeroEdicion;
 
-            // Leer número de edición
+           
             if (!(archivo >> numeroEdicion)) {
                 cerr << "Error al leer el número de edición de la revista.\n";
                 break;
             }
 
-            archivo.ignore(); // Ignorar la coma después del número de edición
+            archivo.ignore(); 
 
-            // Leer mes de publicación
+            
             if (!getline(archivo, extra1)) {
                 cerr << "Error al leer el mes de publicación de la revista.\n";
                 break;
@@ -153,7 +153,7 @@ void cargarBiblioteca(MaterialBibliografico* biblioteca[], int& numMateriales) {
             break;
         }
 
-        // Verificar capacidad máxima
+        // capacidad máxima
         if (!verificarCapacidad(numMateriales, MAX_MATERIALES)) {
             cerr << "Capacidad máxima de la biblioteca alcanzada.\n";
             break;
@@ -172,7 +172,7 @@ void cargarUsuarios(vector<Usuario>& usuarios) {
 
     string nombre, material;
     while (getline(archivo, nombre, ',')) {
-        getline(archivo, material); // Ignorar el material por ahora
+        getline(archivo, material); 
         usuarios.push_back(Usuario(nombre, usuarios.size() + 1));
     }
     archivo.close();
@@ -234,7 +234,7 @@ MaterialBibliografico* buscarMaterial(MaterialBibliografico* biblioteca[], int n
             return biblioteca[i];
         }
     }
-    return nullptr; // Devuelve nullptr si no se encuentra el material
+    return nullptr; 
 }
 
 
@@ -252,7 +252,7 @@ Usuario* buscarUsuario(vector<Usuario>& usuarios, const string& nombre) {
 
 
 
-// Ejemplo de definición de devolverMaterial
+
 void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* biblioteca[], int numMateriales) {
     string nombreUsuario, tituloMaterial;
     cout << "Ingrese el nombre del usuario: ";
@@ -284,12 +284,12 @@ void devolverMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliote
     }
 }
 
-// Ejemplo de definición de verificarCapacidad
+
 bool verificarCapacidad(int numMateriales, int maxMateriales) {
     return numMateriales < maxMateriales;
 }
 
-// Ejemplo de definición de verificarPrestamo
+
 bool verificarPrestamo(Usuario* usuario, MaterialBibliografico* material) {
     if (usuario->cantidadPrestados() >= 5) {
         cerr << "Error: El usuario ya tiene 5 materiales prestados.\n";
@@ -326,9 +326,9 @@ void prestarMaterial(vector<Usuario>& usuarios, MaterialBibliografico* bibliotec
     }
     if ( material && usuario) {
         if (!material->estaPrestado()) {
-            // No está prestado, verificar capacidad
+            
             if (verificarPrestamo(usuario, material)) {
-               // Cambiar el estado del material a prestado
+               
                 usuario->prestarMaterial(material);
                 cout << "Material prestado con éxito.\n";
                 actualizarPrestamos(*usuario, material);
@@ -373,9 +373,9 @@ void eliminarPrestamo(const Usuario& usuario, const MaterialBibliografico* mater
     string nombreUsuario = usuario.getNombre();
     string nombreMaterial = material->getNombre();
 
-    // Leer cada línea y escribirla en el archivo temporal si no coincide con la que queremos eliminar
+   
     while (getline(archivoEntrada, linea)) {
-        // Si la línea no contiene tanto el nombre del usuario como el material, la copiamos
+        
         if (linea.find(nombreUsuario) == string::npos || linea.find(nombreMaterial) == string::npos) {
             archivoSalida << linea << endl;
         }

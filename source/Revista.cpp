@@ -6,7 +6,7 @@ Revista::Revista(const std::string& nombre, const std::string& isbn, const std::
                  int numeroEdicion, const std::string& mesPublicacion)
     : MaterialBibliografico(nombre, isbn, autor), numeroEdicion(numeroEdicion), mesPublicacion(mesPublicacion) {}
 
-// Sobreescritura de mostrarInformacion
+
 void Revista::mostrarInformacion() const {
     std::cout << "Revista: " << nombre << "\n"
               << "Autor: " << autor << "\n"

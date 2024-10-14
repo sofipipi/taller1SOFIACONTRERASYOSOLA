@@ -2,7 +2,7 @@
 #define USUARIO_H
 
 #include <string>
-#include <vector>  // Asegúrate de incluir vector
+#include <vector>  
 #include "MaterialBibliografico.h"
 
 class Usuario {
@@ -18,10 +18,10 @@ public:
     int cantidadPrestados() const;
 
     bool prestarMaterial(MaterialBibliografico* material);
-    bool devolverMaterial(MaterialBibliografico* material); // Asegúrate de que la firma coincida
+    bool devolverMaterial(MaterialBibliografico* material); 
 };
 
-#endif // USUARIO_H
+#endif 
 
 
 

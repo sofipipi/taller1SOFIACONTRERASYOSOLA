@@ -5,7 +5,7 @@
 // Constructor
 Usuario::Usuario(const std::string& nombre, int id) : nombre(nombre), id(id) {}
 
-// Obtener el nombre del usuario
+
 std::string Usuario::getNombre() const {
     return nombre;
 }
@@ -29,13 +29,13 @@ bool Usuario::prestarMaterial(MaterialBibliografico* material) {
 
 // Devolver material
 bool Usuario::devolverMaterial(MaterialBibliografico* material) {
-    // Busca el material en el vector de materiales prestados
+    
     auto it = std::find(materialesPrestados.begin(), materialesPrestados.end(), material);
     
-    // Si se encuentra, lo devuelve
+   
     if (it != materialesPrestados.end()) {
-        material->devolver();  // Cambia el estado del material a disponible
-        materialesPrestados.erase(it);  // Elimina el material del vector
+        material->devolver();  
+        materialesPrestados.erase(it);  
         return true;
     } else {
         std::cerr << "Error: el usuario no ha prestado este material.\n";
